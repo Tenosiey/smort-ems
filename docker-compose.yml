@@ -1,0 +1,43 @@
+services:
+  controller:
+    image: alpine:latest
+    command: echo "Ich bin der controller" && sleep 5
+
+  poller:
+    image: alpine:latest
+    command: echo "Ich bin der poller" && sleep 5
+
+  gateway:
+    image: alpine:latest
+    command: echo "Ich bin das gateway" && sleep 5
+
+  influxdb:
+    image: influxdb:latest
+    restart: unless-stopped
+    ports:
+      - 8086:8086
+    volumes:
+      - ./db:/var/lib/influxdb
+
+  grafana:
+    image: grafana/grafana:latest
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+
+  mqtt-broker:
+    image: eclipse-mosquitto:latest
+    restart: unless-stopped
+    ports:
+      - 1883:1883
+      - 9001:9001
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+
+volumes:
+  db:
+  config:
+  data:
+  log:
