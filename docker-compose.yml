@@ -17,13 +17,15 @@ services:
     ports:
       - 8086:8086
     volumes:
-      - ./db:/var/lib/influxdb
+      - db:/var/lib/influxdb
 
   grafana:
     image: grafana/grafana:latest
     restart: unless-stopped
     ports:
       - 3000:3000
+    volumes:
+      - grafana:/var/lib/grafana
 
   mqtt-broker:
     image: eclipse-mosquitto:latest
@@ -32,12 +34,8 @@ services:
       - 1883:1883
       - 9001:9001
     volumes:
-      - ./mosquitto/config:/mosquitto/config
-      - ./mosquitto/data:/mosquitto/data
-      - ./mosquitto/log:/mosquitto/log
+      - ./mosquitto/config:/mosquitto/config/
 
 volumes:
   db:
-  config:
-  data:
-  log:
+  grafana:
