@@ -25,6 +25,13 @@ services:
       - DOCKER_INFLUXDB_INIT_ORG=my-org
       - DOCKER_INFLUXDB_INIT_BUCKET=my-bucket
 
+  telegraf:
+    image: telegraf:latest
+    restart: unless-stopped
+    depends_on:
+      - influxdb
+      - mqtt-broker
+
   grafana:
     image: grafana/grafana:latest
     restart: unless-stopped
@@ -32,6 +39,8 @@ services:
       - 3000:3000
     volumes:
       - grafana:/var/lib/grafana
+    depends_on:
+      - influxdb
 
   mqtt-broker:
     image: eclipse-mosquitto:latest
