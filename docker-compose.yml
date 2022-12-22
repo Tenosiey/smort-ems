@@ -24,10 +24,13 @@ services:
       - DOCKER_INFLUXDB_INIT_PASSWORD=admin1234
       - DOCKER_INFLUXDB_INIT_ORG=my-org
       - DOCKER_INFLUXDB_INIT_BUCKET=my-bucket
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=83c06345362b09d504b279464923117896aa6f57ed6c24e48a3b56fb1d3cdb04
 
   telegraf:
     image: telegraf:latest
     restart: unless-stopped
+    volumes:
+      - ./config/telegraf/config/telegraf.conf:/etc/telegraf/telegraf.conf
     depends_on:
       - influxdb
       - mqtt-broker
@@ -49,7 +52,7 @@ services:
       - 1883:1883
       - 9001:9001
     volumes:
-      - ./mosquitto/config:/mosquitto/config/
+      - ./config/mosquitto/config:/mosquitto/config/
 
 volumes:
   db:
