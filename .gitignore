@@ -2,3 +2,4 @@
 /db
 /mosquitto/data
 /mosquitto/log
+.env
