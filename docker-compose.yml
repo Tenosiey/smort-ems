@@ -29,6 +29,8 @@ services:
     depends_on:
       - influxdb
       - mqtt-broker
+    env_file:
+      - .env
 
   grafana:
     image: grafana/grafana:latest
