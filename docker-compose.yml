@@ -18,13 +18,8 @@ services:
       - 8086:8086
     volumes:
       - db:/var/lib/influxdb
-    environment:
-      - DOCKER_INFLUXDB_INIT_MODE=setup
-      - DOCKER_INFLUXDB_INIT_USERNAME=admin
-      - DOCKER_INFLUXDB_INIT_PASSWORD=admin1234
-      - DOCKER_INFLUXDB_INIT_ORG=my-org
-      - DOCKER_INFLUXDB_INIT_BUCKET=my-bucket
-      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=83c06345362b09d504b279464923117896aa6f57ed6c24e48a3b56fb1d3cdb04
+    env_file:
+      - .env
 
   telegraf:
     image: telegraf:latest
