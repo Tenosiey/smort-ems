@@ -1,0 +1,636 @@
+{
+	"annotations": {
+		"list": [
+			{
+				"builtIn": 1,
+				"datasource": {
+					"type": "grafana",
+					"uid": "-- Grafana --"
+				},
+				"enable": true,
+				"hide": true,
+				"iconColor": "rgba(0, 211, 255, 1)",
+				"name": "Annotations & Alerts",
+				"target": {
+					"limit": 100,
+					"matchAny": false,
+					"tags": [],
+					"type": "dashboard"
+				},
+				"type": "dashboard"
+			}
+		]
+	},
+	"editable": true,
+	"fiscalYearStartMonth": 0,
+	"graphTooltip": 0,
+	"id": 1,
+	"links": [],
+	"liveNow": false,
+	"panels": [
+		{
+			"datasource": {
+				"type": "influxdb",
+				"uid": "AZL3uDtVk"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"fixedColor": "purple",
+						"mode": "fixed"
+					},
+					"decimals": 3,
+					"displayName": "Total Energy",
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": null
+							},
+							{
+								"color": "red",
+								"value": 80
+							}
+						]
+					},
+					"unit": "watth"
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 6,
+				"w": 8,
+				"x": 0,
+				"y": 0
+			},
+			"id": 6,
+			"options": {
+				"colorMode": "value",
+				"graphMode": "area",
+				"justifyMode": "auto",
+				"orientation": "auto",
+				"reduceOptions": {
+					"calcs": ["lastNotNull"],
+					"fields": "",
+					"values": false
+				},
+				"text": {},
+				"textMode": "value"
+			},
+			"pluginVersion": "9.3.2",
+			"targets": [
+				{
+					"datasource": {
+						"type": "influxdb",
+						"uid": "AZL3uDtVk"
+					},
+					"hide": true,
+					"query": "from(bucket: \"my-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"shelly-em3-meter\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"total\")\r\n  |> filter(fn: (r) => r[\"device_id\"] == \"0\")\r\n  |> filter(fn: (r) => r[\"device_name\"] == \"emeter\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"5835dfc83ddb\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> last()",
+					"refId": "Energy L1"
+				},
+				{
+					"datasource": {
+						"type": "influxdb",
+						"uid": "AZL3uDtVk"
+					},
+					"hide": true,
+					"query": "from(bucket: \"my-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"shelly-em3-meter\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"total\")\r\n  |> filter(fn: (r) => r[\"device_id\"] == \"1\")\r\n  |> filter(fn: (r) => r[\"device_name\"] == \"emeter\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"5835dfc83ddb\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> last()",
+					"refId": "Energy L2"
+				},
+				{
+					"datasource": {
+						"type": "influxdb",
+						"uid": "AZL3uDtVk"
+					},
+					"hide": true,
+					"query": "from(bucket: \"my-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"shelly-em3-meter\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"total\")\r\n  |> filter(fn: (r) => r[\"device_id\"] == \"1\")\r\n  |> filter(fn: (r) => r[\"device_name\"] == \"emeter\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"5835dfc83ddb\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> last()",
+					"refId": "Energy L3"
+				},
+				{
+					"datasource": {
+						"name": "Expression",
+						"type": "__expr__",
+						"uid": "__expr__"
+					},
+					"expression": "${Energy L1} + ${Energy L2} + ${Energy L3} + (((${CURRENT_POWERMETER} - 1300) * 1000) - (${Energy L1} + ${Energy L2} + ${Energy L3}))",
+					"hide": false,
+					"refId": "Energy Total",
+					"type": "math"
+				}
+			],
+			"title": "Total Energy",
+			"type": "stat"
+		},
+		{
+			"datasource": {
+				"type": "influxdb",
+				"uid": "AZL3uDtVk"
+			},
+			"description": "",
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "continuous-GrYlRd"
+					},
+					"custom": {
+						"neutral": -1
+					},
+					"decimals": 1,
+					"mappings": [],
+					"max": 240,
+					"min": 225,
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": null
+							},
+							{
+								"color": "red",
+								"value": 80
+							}
+						]
+					},
+					"unit": "volt"
+				},
+				"overrides": [
+					{
+						"matcher": {
+							"id": "byFrameRefID",
+							"options": "Voltage L1"
+						},
+						"properties": [
+							{
+								"id": "displayName",
+								"value": "Voltage L1"
+							}
+						]
+					},
+					{
+						"matcher": {
+							"id": "byFrameRefID",
+							"options": "Voltage L2"
+						},
+						"properties": [
+							{
+								"id": "displayName",
+								"value": "Voltage L2"
+							}
+						]
+					},
+					{
+						"matcher": {
+							"id": "byFrameRefID",
+							"options": "Voltage L3"
+						},
+						"properties": [
+							{
+								"id": "displayName",
+								"value": "Voltage L3"
+							}
+						]
+					}
+				]
+			},
+			"gridPos": {
+				"h": 6,
+				"w": 8,
+				"x": 8,
+				"y": 0
+			},
+			"id": 4,
+			"options": {
+				"orientation": "auto",
+				"reduceOptions": {
+					"calcs": ["lastNotNull"],
+					"fields": "",
+					"values": false
+				},
+				"showThresholdLabels": false,
+				"showThresholdMarkers": true,
+				"text": {}
+			},
+			"pluginVersion": "9.3.2",
+			"targets": [
+				{
+					"datasource": {
+						"type": "influxdb",
+						"uid": "AZL3uDtVk"
+					},
+					"query": "from(bucket: \"my-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"shelly-em3-meter\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"voltage\")\r\n  |> filter(fn: (r) => r[\"device_id\"] == \"0\")\r\n  |> filter(fn: (r) => r[\"device_name\"] == \"emeter\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"5835dfc83ddb\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> last()",
+					"refId": "Voltage L1"
+				},
+				{
+					"datasource": {
+						"type": "influxdb",
+						"uid": "AZL3uDtVk"
+					},
+					"hide": false,
+					"query": "from(bucket: \"my-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"shelly-em3-meter\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"voltage\")\r\n  |> filter(fn: (r) => r[\"device_id\"] == \"1\")\r\n  |> filter(fn: (r) => r[\"device_name\"] == \"emeter\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"5835dfc83ddb\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> last()",
+					"refId": "Voltage L2"
+				},
+				{
+					"datasource": {
+						"type": "influxdb",
+						"uid": "AZL3uDtVk"
+					},
+					"hide": false,
+					"query": "from(bucket: \"my-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"shelly-em3-meter\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"voltage\")\r\n  |> filter(fn: (r) => r[\"device_id\"] == \"2\")\r\n  |> filter(fn: (r) => r[\"device_name\"] == \"emeter\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"5835dfc83ddb\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> last()",
+					"refId": "Voltage L3"
+				}
+			],
+			"title": "Voltage",
+			"type": "gauge"
+		},
+		{
+			"datasource": {
+				"type": "influxdb",
+				"uid": "AZL3uDtVk"
+			},
+			"description": "",
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "thresholds"
+					},
+					"decimals": 1,
+					"mappings": [],
+					"max": 1000,
+					"min": -1,
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": null
+							},
+							{
+								"color": "#EAB839",
+								"value": 250
+							},
+							{
+								"color": "red",
+								"value": 750
+							}
+						]
+					},
+					"unit": "watt"
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 6,
+				"w": 8,
+				"x": 16,
+				"y": 0
+			},
+			"id": 8,
+			"options": {
+				"displayMode": "lcd",
+				"minVizHeight": 10,
+				"minVizWidth": 0,
+				"orientation": "horizontal",
+				"reduceOptions": {
+					"calcs": ["lastNotNull"],
+					"fields": "",
+					"values": false
+				},
+				"showUnfilled": true
+			},
+			"pluginVersion": "9.3.2",
+			"targets": [
+				{
+					"datasource": {
+						"type": "influxdb",
+						"uid": "AZL3uDtVk"
+					},
+					"hide": true,
+					"query": "from(bucket: \"my-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"shelly-em3-meter\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"power\")\r\n  |> filter(fn: (r) => r[\"device_id\"] == \"0\")\r\n  |> filter(fn: (r) => r[\"device_name\"] == \"emeter\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> last()",
+					"refId": "Current Power L1"
+				},
+				{
+					"datasource": {
+						"type": "influxdb",
+						"uid": "AZL3uDtVk"
+					},
+					"hide": true,
+					"query": "from(bucket: \"my-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"shelly-em3-meter\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"power\")\r\n  |> filter(fn: (r) => r[\"device_id\"] == \"1\")\r\n  |> filter(fn: (r) => r[\"device_name\"] == \"emeter\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> last()",
+					"refId": "Current Power L2"
+				},
+				{
+					"datasource": {
+						"type": "influxdb",
+						"uid": "AZL3uDtVk"
+					},
+					"hide": true,
+					"query": "from(bucket: \"my-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"shelly-em3-meter\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"power\")\r\n  |> filter(fn: (r) => r[\"device_id\"] == \"2\")\r\n  |> filter(fn: (r) => r[\"device_name\"] == \"emeter\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> last()",
+					"refId": "Current Power L3"
+				},
+				{
+					"datasource": {
+						"name": "Expression",
+						"type": "__expr__",
+						"uid": "__expr__"
+					},
+					"expression": "${Current Power L1} + ${Current Power L2} + ${Current Power L3}",
+					"hide": false,
+					"refId": "Current Power Total",
+					"type": "math"
+				}
+			],
+			"title": "Current Power",
+			"type": "bargauge"
+		},
+		{
+			"datasource": {
+				"type": "influxdb",
+				"uid": "AZL3uDtVk"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "palette-classic"
+					},
+					"custom": {
+						"axisCenteredZero": false,
+						"axisColorMode": "text",
+						"axisLabel": "Power",
+						"axisPlacement": "auto",
+						"barAlignment": 0,
+						"drawStyle": "line",
+						"fillOpacity": 25,
+						"gradientMode": "opacity",
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						},
+						"lineInterpolation": "linear",
+						"lineStyle": {
+							"fill": "solid"
+						},
+						"lineWidth": 1,
+						"pointSize": 5,
+						"scaleDistribution": {
+							"type": "linear"
+						},
+						"showPoints": "auto",
+						"spanNulls": false,
+						"stacking": {
+							"group": "A",
+							"mode": "none"
+						},
+						"thresholdsStyle": {
+							"mode": "off"
+						}
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green",
+								"value": null
+							},
+							{
+								"color": "red",
+								"value": 80
+							}
+						]
+					},
+					"unit": "watt"
+				},
+				"overrides": [
+					{
+						"matcher": {
+							"id": "byFrameRefID",
+							"options": "Power L1"
+						},
+						"properties": [
+							{
+								"id": "displayName",
+								"value": "Power L1"
+							}
+						]
+					},
+					{
+						"matcher": {
+							"id": "byFrameRefID",
+							"options": "Power L2"
+						},
+						"properties": [
+							{
+								"id": "displayName",
+								"value": "Power L2"
+							}
+						]
+					},
+					{
+						"matcher": {
+							"id": "byFrameRefID",
+							"options": "Power L3"
+						},
+						"properties": [
+							{
+								"id": "displayName",
+								"value": "Power L3"
+							}
+						]
+					},
+					{
+						"matcher": {
+							"id": "byFrameRefID",
+							"options": "Power Total"
+						},
+						"properties": [
+							{
+								"id": "displayName",
+								"value": "Power Total"
+							},
+							{
+								"id": "custom.lineWidth",
+								"value": 2
+							}
+						]
+					}
+				]
+			},
+			"gridPos": {
+				"h": 10,
+				"w": 24,
+				"x": 0,
+				"y": 6
+			},
+			"id": 2,
+			"options": {
+				"legend": {
+					"calcs": ["lastNotNull"],
+					"displayMode": "table",
+					"placement": "right",
+					"showLegend": true
+				},
+				"tooltip": {
+					"mode": "multi",
+					"sort": "none"
+				}
+			},
+			"targets": [
+				{
+					"datasource": {
+						"type": "influxdb",
+						"uid": "AZL3uDtVk"
+					},
+					"query": "from(bucket: \"my-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"shelly-em3-meter\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"power\")\r\n  |> filter(fn: (r) => r[\"device_id\"] == \"0\")\r\n  |> filter(fn: (r) => r[\"device_name\"] == \"emeter\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"5835dfc83ddb\")\r\n  |> aggregateWindow(every: ${aggregation}, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")",
+					"refId": "Power L1"
+				},
+				{
+					"datasource": {
+						"type": "influxdb",
+						"uid": "AZL3uDtVk"
+					},
+					"hide": false,
+					"query": "from(bucket: \"my-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"shelly-em3-meter\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"power\")\r\n  |> filter(fn: (r) => r[\"device_id\"] == \"1\")\r\n  |> filter(fn: (r) => r[\"device_name\"] == \"emeter\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"5835dfc83ddb\")\r\n  |> aggregateWindow(every: ${aggregation}, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")",
+					"refId": "Power L2"
+				},
+				{
+					"datasource": {
+						"type": "influxdb",
+						"uid": "AZL3uDtVk"
+					},
+					"hide": false,
+					"query": "from(bucket: \"my-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"shelly-em3-meter\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"power\")\r\n  |> filter(fn: (r) => r[\"device_id\"] == \"2\")\r\n  |> filter(fn: (r) => r[\"device_name\"] == \"emeter\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"5835dfc83ddb\")\r\n  |> aggregateWindow(every: ${aggregation}, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")",
+					"refId": "Power L3"
+				},
+				{
+					"datasource": {
+						"name": "Expression",
+						"type": "__expr__",
+						"uid": "__expr__"
+					},
+					"expression": "${Power L1} + ${Power L2} + ${Power L3}",
+					"hide": false,
+					"refId": "Power Total",
+					"type": "math"
+				}
+			],
+			"title": "Power",
+			"type": "timeseries"
+		}
+	],
+	"refresh": false,
+	"schemaVersion": 37,
+	"style": "dark",
+	"tags": [],
+	"templating": {
+		"list": [
+			{
+				"description": "Current Value of Power Meter",
+				"hide": 2,
+				"name": "CURRENT_POWERMETER",
+				"query": "2370",
+				"skipUrlSync": false,
+				"type": "constant"
+			},
+			{
+				"auto": false,
+				"auto_count": 30,
+				"auto_min": "10s",
+				"current": {
+					"selected": false,
+					"text": "10s",
+					"value": "10s"
+				},
+				"hide": 0,
+				"name": "aggregation",
+				"options": [
+					{
+						"selected": false,
+						"text": "1s",
+						"value": "1s"
+					},
+					{
+						"selected": true,
+						"text": "10s",
+						"value": "10s"
+					},
+					{
+						"selected": false,
+						"text": "1m",
+						"value": "1m"
+					},
+					{
+						"selected": false,
+						"text": "15m",
+						"value": "15m"
+					},
+					{
+						"selected": false,
+						"text": "1h",
+						"value": "1h"
+					},
+					{
+						"selected": false,
+						"text": "6h",
+						"value": "6h"
+					},
+					{
+						"selected": false,
+						"text": "12h",
+						"value": "12h"
+					},
+					{
+						"selected": false,
+						"text": "1d",
+						"value": "1d"
+					},
+					{
+						"selected": false,
+						"text": "7d",
+						"value": "7d"
+					},
+					{
+						"selected": false,
+						"text": "14d",
+						"value": "14d"
+					},
+					{
+						"selected": false,
+						"text": "30d",
+						"value": "30d"
+					}
+				],
+				"query": "1s,10s,1m,15m,1h,6h,12h,1d,7d,14d,30d",
+				"queryValue": "",
+				"refresh": 2,
+				"skipUrlSync": false,
+				"type": "interval"
+			}
+		]
+	},
+	"time": {
+		"from": "now-15m",
+		"to": "now"
+	},
+	"timepicker": {
+		"refresh_intervals": [
+			"5s",
+			"10s",
+			"30s",
+			"1m",
+			"5m",
+			"15m",
+			"30m",
+			"1h",
+			"2h",
+			"1d"
+		]
+	},
+	"timezone": "",
+	"title": "Tjarks Home",
+	"uid": "NWUtrvt4z",
+	"version": 7,
+	"weekStart": ""
+}
