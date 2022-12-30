@@ -1,15 +1,6 @@
 services:
-  controller:
-    image: alpine:latest
-    command: echo "Ich bin der controller" && sleep 5
-
-  poller:
-    image: alpine:latest
-    command: echo "Ich bin der poller" && sleep 5
-
-  gateway:
-    image: alpine:latest
-    command: echo "Ich bin das gateway" && sleep 5
+  com-twin:
+    build: ./com-twin/
 
   influxdb:
     image: influxdb:latest

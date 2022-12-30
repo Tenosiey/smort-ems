@@ -1,5 +1,2 @@
-/target
-/db
-/mosquitto/data
-/mosquitto/log
+target
 .env
