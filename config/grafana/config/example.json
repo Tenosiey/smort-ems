@@ -57,7 +57,35 @@
 					},
 					"unit": "watth"
 				},
-				"overrides": []
+				"overrides": [
+					{
+						"matcher": {
+							"id": "byFrameRefID",
+							"options": "Cost Total"
+						},
+						"properties": [
+							{
+								"id": "displayName",
+								"value": "Kosten"
+							},
+							{
+								"id": "color",
+								"value": {
+									"fixedColor": "red",
+									"mode": "fixed"
+								}
+							},
+							{
+								"id": "unit",
+								"value": "currencyEUR"
+							},
+							{
+								"id": "decimals",
+								"value": 2
+							}
+						]
+					}
+				]
 			},
 			"gridPos": {
 				"h": 6,
@@ -87,7 +115,7 @@
 						"uid": "AZL3uDtVk"
 					},
 					"hide": true,
-					"query": "from(bucket: \"my-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"shelly-em3-meter\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"total\")\r\n  |> filter(fn: (r) => r[\"device_id\"] == \"0\")\r\n  |> filter(fn: (r) => r[\"device_name\"] == \"emeter\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"5835dfc83ddb\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> last()",
+					"query": "from(bucket: \"my-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"shelly-em3-meter\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"total\")\r\n  |> filter(fn: (r) => r[\"device_id\"] == \"0\")\r\n  |> filter(fn: (r) => r[\"device_name\"] == \"emeter\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> last()",
 					"refId": "Energy L1"
 				},
 				{
@@ -96,7 +124,7 @@
 						"uid": "AZL3uDtVk"
 					},
 					"hide": true,
-					"query": "from(bucket: \"my-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"shelly-em3-meter\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"total\")\r\n  |> filter(fn: (r) => r[\"device_id\"] == \"1\")\r\n  |> filter(fn: (r) => r[\"device_name\"] == \"emeter\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"5835dfc83ddb\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> last()",
+					"query": "from(bucket: \"my-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"shelly-em3-meter\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"total\")\r\n  |> filter(fn: (r) => r[\"device_id\"] == \"1\")\r\n  |> filter(fn: (r) => r[\"device_name\"] == \"emeter\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> last()",
 					"refId": "Energy L2"
 				},
 				{
@@ -105,7 +133,7 @@
 						"uid": "AZL3uDtVk"
 					},
 					"hide": true,
-					"query": "from(bucket: \"my-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"shelly-em3-meter\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"total\")\r\n  |> filter(fn: (r) => r[\"device_id\"] == \"1\")\r\n  |> filter(fn: (r) => r[\"device_name\"] == \"emeter\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"5835dfc83ddb\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> last()",
+					"query": "from(bucket: \"my-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"shelly-em3-meter\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"total\")\r\n  |> filter(fn: (r) => r[\"device_id\"] == \"1\")\r\n  |> filter(fn: (r) => r[\"device_name\"] == \"emeter\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> last()",
 					"refId": "Energy L3"
 				},
 				{
@@ -114,9 +142,20 @@
 						"type": "__expr__",
 						"uid": "__expr__"
 					},
-					"expression": "${Energy L1} + ${Energy L2} + ${Energy L3} + (((${CURRENT_POWERMETER} - 1300) * 1000) - (${Energy L1} + ${Energy L2} + ${Energy L3}))",
+					"expression": "${Energy L1} + ${Energy L2} + ${Energy L3} + ${CORRECTED_POWER}",
 					"hide": false,
 					"refId": "Energy Total",
+					"type": "math"
+				},
+				{
+					"datasource": {
+						"name": "Expression",
+						"type": "__expr__",
+						"uid": "__expr__"
+					},
+					"expression": "(${Energy Total} / 1000) * 0.302",
+					"hide": false,
+					"refId": "Cost Total",
 					"type": "math"
 				}
 			],
@@ -220,7 +259,7 @@
 						"type": "influxdb",
 						"uid": "AZL3uDtVk"
 					},
-					"query": "from(bucket: \"my-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"shelly-em3-meter\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"voltage\")\r\n  |> filter(fn: (r) => r[\"device_id\"] == \"0\")\r\n  |> filter(fn: (r) => r[\"device_name\"] == \"emeter\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"5835dfc83ddb\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> last()",
+					"query": "from(bucket: \"my-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"shelly-em3-meter\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"voltage\")\r\n  |> filter(fn: (r) => r[\"device_id\"] == \"0\")\r\n  |> filter(fn: (r) => r[\"device_name\"] == \"emeter\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> last()",
 					"refId": "Voltage L1"
 				},
 				{
@@ -229,7 +268,7 @@
 						"uid": "AZL3uDtVk"
 					},
 					"hide": false,
-					"query": "from(bucket: \"my-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"shelly-em3-meter\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"voltage\")\r\n  |> filter(fn: (r) => r[\"device_id\"] == \"1\")\r\n  |> filter(fn: (r) => r[\"device_name\"] == \"emeter\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"5835dfc83ddb\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> last()",
+					"query": "from(bucket: \"my-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"shelly-em3-meter\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"voltage\")\r\n  |> filter(fn: (r) => r[\"device_id\"] == \"1\")\r\n  |> filter(fn: (r) => r[\"device_name\"] == \"emeter\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> last()",
 					"refId": "Voltage L2"
 				},
 				{
@@ -238,7 +277,7 @@
 						"uid": "AZL3uDtVk"
 					},
 					"hide": false,
-					"query": "from(bucket: \"my-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"shelly-em3-meter\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"voltage\")\r\n  |> filter(fn: (r) => r[\"device_id\"] == \"2\")\r\n  |> filter(fn: (r) => r[\"device_name\"] == \"emeter\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"5835dfc83ddb\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> last()",
+					"query": "from(bucket: \"my-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"shelly-em3-meter\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"voltage\")\r\n  |> filter(fn: (r) => r[\"device_id\"] == \"2\")\r\n  |> filter(fn: (r) => r[\"device_name\"] == \"emeter\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> last()",
 					"refId": "Voltage L3"
 				}
 			],
@@ -483,7 +522,7 @@
 						"type": "influxdb",
 						"uid": "AZL3uDtVk"
 					},
-					"query": "from(bucket: \"my-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"shelly-em3-meter\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"power\")\r\n  |> filter(fn: (r) => r[\"device_id\"] == \"0\")\r\n  |> filter(fn: (r) => r[\"device_name\"] == \"emeter\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"5835dfc83ddb\")\r\n  |> aggregateWindow(every: ${aggregation}, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")",
+					"query": "from(bucket: \"my-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"shelly-em3-meter\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"power\")\r\n  |> filter(fn: (r) => r[\"device_id\"] == \"0\")\r\n  |> filter(fn: (r) => r[\"device_name\"] == \"emeter\")\r\n  |> aggregateWindow(every: ${aggregation}, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")",
 					"refId": "Power L1"
 				},
 				{
@@ -492,7 +531,7 @@
 						"uid": "AZL3uDtVk"
 					},
 					"hide": false,
-					"query": "from(bucket: \"my-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"shelly-em3-meter\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"power\")\r\n  |> filter(fn: (r) => r[\"device_id\"] == \"1\")\r\n  |> filter(fn: (r) => r[\"device_name\"] == \"emeter\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"5835dfc83ddb\")\r\n  |> aggregateWindow(every: ${aggregation}, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")",
+					"query": "from(bucket: \"my-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"shelly-em3-meter\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"power\")\r\n  |> filter(fn: (r) => r[\"device_id\"] == \"1\")\r\n  |> filter(fn: (r) => r[\"device_name\"] == \"emeter\")\r\n  |> aggregateWindow(every: ${aggregation}, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")",
 					"refId": "Power L2"
 				},
 				{
@@ -501,7 +540,7 @@
 						"uid": "AZL3uDtVk"
 					},
 					"hide": false,
-					"query": "from(bucket: \"my-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"shelly-em3-meter\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"power\")\r\n  |> filter(fn: (r) => r[\"device_id\"] == \"2\")\r\n  |> filter(fn: (r) => r[\"device_name\"] == \"emeter\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"5835dfc83ddb\")\r\n  |> aggregateWindow(every: ${aggregation}, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")",
+					"query": "from(bucket: \"my-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"shelly-em3-meter\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"power\")\r\n  |> filter(fn: (r) => r[\"device_id\"] == \"2\")\r\n  |> filter(fn: (r) => r[\"device_name\"] == \"emeter\")\r\n  |> aggregateWindow(every: ${aggregation}, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")",
 					"refId": "Power L3"
 				},
 				{
@@ -529,8 +568,8 @@
 			{
 				"description": "Current Value of Power Meter",
 				"hide": 2,
-				"name": "CURRENT_POWERMETER",
-				"query": "2370",
+				"name": "CORRECTED_POWER",
+				"query": "345738",
 				"skipUrlSync": false,
 				"type": "constant"
 			},
@@ -540,8 +579,8 @@
 				"auto_min": "10s",
 				"current": {
 					"selected": false,
-					"text": "10s",
-					"value": "10s"
+					"text": "15m",
+					"value": "15m"
 				},
 				"hide": 0,
 				"name": "aggregation",
@@ -552,7 +591,7 @@
 						"value": "1s"
 					},
 					{
-						"selected": true,
+						"selected": false,
 						"text": "10s",
 						"value": "10s"
 					},
@@ -562,7 +601,7 @@
 						"value": "1m"
 					},
 					{
-						"selected": false,
+						"selected": true,
 						"text": "15m",
 						"value": "15m"
 					},
@@ -611,7 +650,7 @@
 		]
 	},
 	"time": {
-		"from": "now-15m",
+		"from": "now-12h",
 		"to": "now"
 	},
 	"timepicker": {
@@ -631,6 +670,6 @@
 	"timezone": "",
 	"title": "Tjarks Home",
 	"uid": "NWUtrvt4z",
-	"version": 7,
+	"version": 10,
 	"weekStart": ""
 }
